@@ -1,58 +1,67 @@
 function init(){
     console.log("Using Three.js version:"+THREE.REVISION)
-    //1.场景
+    //场景
     var scene = new THREE.Scene();
-    //2.摄像机
+    //摄像机
     var camera = new THREE.PerspectiveCamera(45,
         window.innerWidth/window.innerHeight,0.1,1000);
     camera.position.x = -30;
     camera.position.y = 40;
     camera.position.z = 30;
     camera.lookAt(scene.position);//指向场景中心，默认是000
-    //3.渲染器
+    //渲染器
     var renderer = new THREE.WebGLRenderer();
     renderer.setClearColorHex();
     renderer.setClearColor(new THREE.Color(0xEEEEEE));
     renderer.setSize(window.innerWidth,
         window.innerHeight);
-    //4.轴
+    renderer.shadowMapEnabled = true;//渲染器要开启阴影
+
+    //光源
+    var spotLight = new THREE.SpotLight(0xffffff);//要添加能产生阴影的光源
+    spotLight.position.set(-40,60,-10);
+    spotLight.castShadow = true;
+    scene.add(spotLight);
+
+    //轴
     var axes = new THREE.AxisHelper(10);
     scene.add(axes);
 
-    //5.Plane
+    //Plane
     var planeGeo = new THREE.PlaneGeometry(60,20);
-    var planeMat = new THREE.MeshBasicMaterial(
+    var planeMat = new THREE.MeshLambertMaterial(
         {color:0xcccccc,//灰色
         }
     );
     var plane = new THREE.Mesh(planeGeo,planeMat);
+    plane.receiveShadow = true;//要指定接受阴影的物体
     plane.rotation.x = -0.5*Math.PI;
     plane.position.x = 15;
     plane.position.y = 0;
-    plane.position.z = 0;
+    plane.position.z = 0;    
     scene.add(plane);
 
-    //6.Cube
+    //Cube
     var cubeGeo = new THREE.BoxGeometry(4,4,4);
-    var cubeMat = new THREE.MeshBasicMaterial(
+    var cubeMat = new THREE.MeshLambertMaterial(
         {color:0xff0000,//红色
-         wireframe:true
         }
     );
     var cube = new THREE.Mesh(cubeGeo,cubeMat);   
+    cube.castShadow = true;//要指定产生阴影的物体
     cube.position.x = -4;
     cube.position.y = 3;
     cube.position.z = 0;
     scene.add(cube);
 
-    //7.Sphere
+    //Sphere
     var sphereGeo = new THREE.SphereGeometry(4,20,20);
-    var sphereMat = new THREE.MeshBasicMaterial(
+    var sphereMat = new THREE.MeshLambertMaterial(
         {color:0xf7777ff,//
-         wireframe:true
         }
     );
     var sphere = new THREE.Mesh(sphereGeo,sphereMat);   
+    sphere.castShadow = true;
     sphere.position.x = 20;
     sphere.position.y = 4;
     sphere.position.z = 2;
