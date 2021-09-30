@@ -1,5 +1,19 @@
 function init(){
     console.log("Using Three.js version:"+THREE.REVISION)
+
+    var stats = initStats();
+    function initStats(){
+        var stats = new Stats();
+        stats.setMode(0);//0:fps,1:ms
+
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.top = '0px';
+        
+        document.getElementById('stats-output').appendChild(stats.domElement);
+        return stats;
+    }
+
     //场景
     var scene = new THREE.Scene();
     //摄像机
@@ -11,7 +25,6 @@ function init(){
     camera.lookAt(scene.position);//指向场景中心，默认是000
     //渲染器
     var renderer = new THREE.WebGLRenderer();
-    renderer.setClearColorHex();
     renderer.setClearColor(new THREE.Color(0xEEEEEE));
     renderer.setSize(window.innerWidth,
         window.innerHeight);
@@ -22,6 +35,10 @@ function init(){
     spotLight.position.set(-40,60,-10);
     spotLight.castShadow = true;
     scene.add(spotLight);
+    
+    //环境光
+    var ambientLight = new THREE.AmbientLight(0x0c0c0c);
+    scene.add(ambientLight);
 
     //轴
     var axes = new THREE.AxisHelper(10);
@@ -72,6 +89,27 @@ function init(){
     document.getElementById("webgl-output").appendChild(
         renderer.domElement
     );
-    //调用渲染器的渲染函数
-    renderer.render(scene,camera);
+
+    var step = 0;
+    renderScene();
+
+    function renderScene(){
+        stats.update();
+        //立方体旋转
+        cube.rotation.x +=0.02;
+        cube.rotation.y +=0.02;
+        cube.rotation.z +=0.02;
+        //球体弹跳
+        step +=0.04;
+        sphere.position.x = 20 + (10*(Math.cos(step))); 
+        sphere.position.y = 2 + (10*Math.abs((Math.sin(step)))); 
+        //回调
+        requestAnimationFrame(renderScene);
+        //调用渲染器的渲染函数
+        renderer.render(scene,camera);
+    }
+
+    
+    
+
 }
