@@ -1,6 +1,13 @@
+
+var scene;
+var camera;
+var renderer;
+
+
 function init(){
     console.log("Using Three.js version:"+THREE.REVISION)
 
+    //显示帧率
     var stats = initStats();
     function initStats(){
         var stats = new Stats();
@@ -15,16 +22,16 @@ function init(){
     }
 
     //场景
-    var scene = new THREE.Scene();
+    scene = new THREE.Scene();
     //摄像机
-    var camera = new THREE.PerspectiveCamera(45,
+    camera = new THREE.PerspectiveCamera(45,
         window.innerWidth/window.innerHeight,0.1,1000);
     camera.position.x = -30;
     camera.position.y = 40;
     camera.position.z = 30;
     camera.lookAt(scene.position);//指向场景中心，默认是000
     //渲染器
-    var renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(new THREE.Color(0xEEEEEE));
     renderer.setSize(window.innerWidth,
         window.innerHeight);
@@ -90,17 +97,32 @@ function init(){
         renderer.domElement
     );
 
+    // var trackballControls = initTrackballControls(camera,renderer); 
+    // var clock = new THREE.Clock();
+
     var step = 0;
+    // 匿名函数吗？this的指向？
+    var controls  = new function(){
+        this.rotationSpeed = 0.02;
+        this.bouncingSpeed = 0.03;
+    }
+    var gui = new dat.GUI();
+    gui.add(controls,'rotationSpeed',0,0.5);
+    gui.add(controls,'bouncingSpeed',0,0.5);
+
     renderScene();
 
     function renderScene(){
+        //摄像机控制函数的刷新
+        // trackballControls.update(clock.getDelta());
+        //帧率显示的刷新
         stats.update();
         //立方体旋转
-        cube.rotation.x +=0.02;
-        cube.rotation.y +=0.02;
-        cube.rotation.z +=0.02;
+        cube.rotation.x +=controls.rotationSpeed;
+        cube.rotation.y +=controls.rotationSpeed;
+        cube.rotation.z +=controls.rotationSpeed;
         //球体弹跳
-        step +=0.04;
+        step +=controls.bouncingSpeed;
         sphere.position.x = 20 + (10*(Math.cos(step))); 
         sphere.position.y = 2 + (10*Math.abs((Math.sin(step)))); 
         //回调
@@ -112,4 +134,10 @@ function init(){
     
     
 
+}
+
+function onResize(){
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth,window.innerHeight);
 }

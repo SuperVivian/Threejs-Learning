@@ -11,6 +11,8 @@
     <script type="text/javascript" src="../libs/TrackballControls.js" charset="UTF-8"></script>
     <!-- 显示动画帧率 -->
     <script type="text/javascript" src="../libs/stats.js" charset="UTF-8"></script>
+    <!-- 控制ui -->
+    <script type="text/javascript" src="../libs/dat.gui.js" charset="UTF-8"></script>
     <!-- 01.js -->
     <script type="text/javascript" src="01.js" charset="UTF-8"></script>
     <!-- default.css -->
@@ -22,9 +24,8 @@
     <div id="webgl-output"></div>
     <!-- run examples -->
     <script type="text/javascript">
-        (function(){
-            init();
-        })();
+        window.onload = init;
+        window.addEventListener('resize',onResize,false)
     </script>
 </body>
 </html>
