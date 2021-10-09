@@ -24,20 +24,16 @@ function init(){
     //场景
     scene = new THREE.Scene();
     //摄像机
-    camera = new THREE.PerspectiveCamera(45,
-        window.innerWidth/window.innerHeight,0.1,1000);
-    camera.position.x = -30;
-    camera.position.y = 40;
-    camera.position.z = 30;
+    camera = new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,1000);
+    camera.position.set(-30,40,30);
     camera.lookAt(scene.position);//指向场景中心，默认是000
     //渲染器
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(new THREE.Color(0xEEEEEE));
-    renderer.setSize(window.innerWidth,
-        window.innerHeight);
+    renderer.setSize(window.innerWidth,window.innerHeight);
     renderer.shadowMapEnabled = true;//渲染器要开启阴影
 
-    //光源
+    //聚光灯
     var spotLight = new THREE.SpotLight(0xffffff);//要添加能产生阴影的光源
     spotLight.position.set(-40,60,-10);
     spotLight.castShadow = true;
@@ -48,6 +44,7 @@ function init(){
     scene.add(ambientLight);
 
     //轴
+    //红色是x，绿色是y，蓝色是z
     var axes = new THREE.AxisHelper(10);
     scene.add(axes);
 
@@ -59,10 +56,9 @@ function init(){
     );
     var plane = new THREE.Mesh(planeGeo,planeMat);
     plane.receiveShadow = true;//要指定接受阴影的物体
+    //左边是正，右边是负
     plane.rotation.x = -0.5*Math.PI;
-    plane.position.x = 15;
-    plane.position.y = 0;
-    plane.position.z = 0;    
+    plane.position.set(15,0,0);
     scene.add(plane);
 
     //Cube
@@ -73,9 +69,7 @@ function init(){
     );
     var cube = new THREE.Mesh(cubeGeo,cubeMat);   
     cube.castShadow = true;//要指定产生阴影的物体
-    cube.position.x = -4;
-    cube.position.y = 3;
-    cube.position.z = 0;
+    cube.position.set(-5,3,0);
     scene.add(cube);
 
     //Sphere
@@ -86,22 +80,30 @@ function init(){
     );
     var sphere = new THREE.Mesh(sphereGeo,sphereMat);   
     sphere.castShadow = true;
-    sphere.position.x = 20;
-    sphere.position.y = 4;
-    sphere.position.z = 2;
+    sphere.position.set(20,4,2);
     scene.add(sphere);
     
+    //Circle
+    var circleGeo = new THREE.CircleGeometry(10,12,0,Math.PI);
+    var circleMat = new THREE.MeshLambertMaterial(
+        {color:0xf7777ff,//
+        }
+    );
+    var circle = new THREE.Mesh(circleGeo,circleMat);   
+    circle.position.set(20,4,2);
+    circle.rotation.x = -0.5*Math.PI;
+    scene.add(circle);
 
     //最后添加到dom上
     document.getElementById("webgl-output").appendChild(
         renderer.domElement
     );
-
+    
+    //摄像机控制（引用的.js文件不存在）
     // var trackballControls = initTrackballControls(camera,renderer); 
     // var clock = new THREE.Clock();
 
     var step = 0;
-    // 匿名函数吗？this的指向？
     var controls  = new function(){
         this.rotationSpeed = 0.02;
         this.bouncingSpeed = 0.03;
@@ -111,7 +113,6 @@ function init(){
     gui.add(controls,'bouncingSpeed',0,0.5);
 
     renderScene();
-
     function renderScene(){
         //摄像机控制函数的刷新
         // trackballControls.update(clock.getDelta());
@@ -129,10 +130,7 @@ function init(){
         requestAnimationFrame(renderScene);
         //调用渲染器的渲染函数
         renderer.render(scene,camera);
-    }
-
-    
-    
+    }      
 
 }
 
